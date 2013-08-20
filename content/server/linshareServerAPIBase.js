@@ -34,6 +34,10 @@ LinshareServerAPIBase.prototype = {
                      .getService(Components.interfaces.nsIConsoleService),
 
 
+    nsIMsgCompFields: Components.classes["@mozilla.org/messengercompose/composefields;1"]
+                     .getService(Components.interfaces.nsIMsgCompFields),
+
+
     logInfo: function (message) {
     	this.console.logStringMessage("LinShare: " + message);
     },

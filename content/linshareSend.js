@@ -29,7 +29,7 @@ var linshareSend = {
                     .classes["@mozilla.org/preferences-service;1"]
                     .getService(Components.interfaces.nsIPrefService)
                     .getBranch("extensions.linshare.")
-                    .QueryInterface(Components.interfaces.nsIPrefBranch2);
+		    .QueryInterface(Components.interfaces.nsIPrefBranch2);
     this.scriptLoader = Components
                             .classes["@mozilla.org/moz/jssubscript-loader;1"]
                             .createInstance(Components.interfaces.mozIJSSubScriptLoader);
@@ -81,6 +81,20 @@ var linshareSend = {
               return new LinshareServerAPIv2();
               
               break;
+          case 3:
+              if(this.isThunderbirdBranch2()) {
+                  if ( typeof(linshareServerAPIv3TB2x) == "undefined" ) {
+                      this.scriptLoader.loadSubScript("chrome://linshare/content/server/linshareServerAPIv3TB2x.js");
+                  }
+                  return new linshareServerAPIv3TB2x();
+              }
+              if ( typeof(LinshareServerAPIv3) == "undefined" ) {
+                  this.scriptLoader.loadSubScript("chrome://linshare/content/server/linshareServerAPIv3.js");
+              }
+              return new LinshareServerAPIv3();
+              
+              break;
+
           default:
               throw "Unsupported server API version '" + version + "'";
       }
@@ -149,6 +163,14 @@ var linshareSend = {
   _createDocument: function(attachment, callback, arg) {
     var statusLabel = document.getElementById("status");
     statusLabel.value = arg.strings.getString("sendLabel") + " " + attachment.name;
+
+    if (this.serverAPIVersion == 2) {
+	// the api swith is due to HTTP error(s). But in this case the version 2 is fully compatible with the server. We need to force the switch if it is possible.
+	if (linshareSend.serverAPI.shouldSwitchVersion(linshareSend.serverInfo)) {
+		linshareSend.prefs.setIntPref("server.api.version", linshareSend.serverAPI.nextVersion());
+		linshareSend.serverAPI = linshareSend.loadServerAPIImplementation();
+    	}
+    }
 
     arg.request = this.serverAPI.uploadFile(this.serverInfo, attachment, {
         error: function (status, e) {

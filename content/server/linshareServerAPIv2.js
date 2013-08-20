@@ -38,23 +38,30 @@ LinshareServerAPIv2.prototype = {
     multipleShareDocumentsUrl: function (url) {
         return url + "/webservice/rest/share/multiplesharedocuments";
     },
+
+    pluginInfoUrl: function (url) {
+        return url + "/webservice/rest/plugin/information";
+    },
     
     uploadFile: function (serverInfo, attachment, callback) {        
         var file = this.openFile(attachment.url);
+	this.logInfo("uploading file : " + attachment.name);
         var request = this.newFileUploadRequest(file, attachment.name, this.uploadFileUrl(serverInfo.url), true, serverInfo.username, serverInfo.password);
         
         request.setRequestHeader("Accept", "application/json");
         request.onreadystatechange = function (e) {
             if (request.readyState == 4) {
+		this.logInfo("upload request status : " + request.status)
                 if (request.status == 200) {
                     try {
                         var doc = JSON.parse(request.responseText);
-                        
                         callback.success(doc.uuid, file);
                     } catch(e) {
+    		        Components.utils.reportError("error : " + request.status + " : " + e);
                         callback.error(request.status, e);
                     }
                 } else {
+    		    Components.utils.reportError("request error code : " + request.status);
                     callback.error(request.status);
                 }
             }
@@ -78,12 +85,33 @@ LinshareServerAPIv2.prototype = {
 
         var params = "targetMail=" + recipient + fileParams;
         var request = this.newRequest("POST", this.multipleShareDocumentsUrl(serverInfo.url), false, serverInfo.username, serverInfo.password);
-        
         request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         request.setRequestHeader("Content-length", params.length);
         request.setRequestHeader("Connection", "close");
         request.send(params);
         
         return request.status == 204;
+    },
+
+    shouldSwitchVersion: function (serverInfo) {
+        var request = this.newRequest("GET", this.pluginInfoUrl(serverInfo.url), false, serverInfo.username, serverInfo.password);
+        
+        request.setRequestHeader("Accept", "application/json");
+
+        request.send(null); // No parameters
+        if (request.status == 200) {
+			var info = JSON.parse(request.responseText);
+   			this.logInfo("current server api version : " + info.value);
+   			if (info.value == "api-version-1") {
+				return true;
+			} // otherwise it is "undefined"
+        } else {
+		this.logError("shouldSwitchVersion failed : " + request.status);
+	}
+	return false;
+    },
+    
+    nextVersion: function () {
+        return 3;
     }
 };
