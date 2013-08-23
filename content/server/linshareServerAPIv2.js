@@ -106,7 +106,8 @@ LinshareServerAPIv2.prototype = {
 				return true;
 			} // otherwise it is "undefined"
         } else {
-		this.logError("shouldSwitchVersion failed : " + request.status);
+		Components.utils.reportError("LinShare: shouldSwitchVersion failed : " + request.status);
+
 	}
 	return false;
     },

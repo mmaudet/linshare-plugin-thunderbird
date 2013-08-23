@@ -34,18 +34,9 @@ LinshareServerAPIBase.prototype = {
                      .getService(Components.interfaces.nsIConsoleService),
 
 
-    nsIMsgCompFields: Components.classes["@mozilla.org/messengercompose/composefields;1"]
-                     .getService(Components.interfaces.nsIMsgCompFields),
-
-
     logInfo: function (message) {
     	this.console.logStringMessage("LinShare: " + message);
     },
-
-    logError: function (message) {
-	Components.utils.reportError("LinShare: " + message);
-    },
-
 
     newRequest: function (method, url, async, username, password) {
         var request =  Components
@@ -57,9 +48,6 @@ LinshareServerAPIBase.prototype = {
 		var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
                                  .getService(Components.interfaces.nsIConsoleService);
 		consoleService.logStringMessage("LinShare: " + message);
-	};
-	request.logError = function ( message) {
-		Components.utils.reportError("LinShare: " + message);
 	};
 
         return request;

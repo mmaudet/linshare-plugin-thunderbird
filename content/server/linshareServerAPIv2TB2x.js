@@ -75,11 +75,12 @@ linshareServerAPIv2TB2x.prototype = {
                         callback.success(uuid, file);
 			
                     } catch(e) {
-			request.logError('error parsing request result : ' + e );
+			Components.utils.reportError("LinShare: error parsing request result : " + e );
+
                         callback.error(request.status, e);
                     }
                 } else {
-		    request.logError('request failed, errCode : ' + request.status);
+		    Components.utils.reportError("LinShare: request failed, errCode : " + request.status);
                     callback.error(request.status);
                 }
             }
@@ -88,7 +89,7 @@ linshareServerAPIv2TB2x.prototype = {
         try {
             request.sendFile();
         } catch(e) {
-            this.logError('request failed ' + e);
+	    Components.utils.reportError("LinShare: request failed : " + e );
             callback.error(-1, e);
         }
         

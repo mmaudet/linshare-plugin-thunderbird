@@ -29,7 +29,7 @@ var linshareSend = {
                     .classes["@mozilla.org/preferences-service;1"]
                     .getService(Components.interfaces.nsIPrefService)
                     .getBranch("extensions.linshare.")
-		    .QueryInterface(Components.interfaces.nsIPrefBranch2);
+		     .QueryInterface(Components.interfaces.nsIPrefBranch2);
     this.scriptLoader = Components
                             .classes["@mozilla.org/moz/jssubscript-loader;1"]
                             .createInstance(Components.interfaces.mozIJSSubScriptLoader);

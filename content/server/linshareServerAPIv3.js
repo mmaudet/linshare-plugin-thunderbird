@@ -27,6 +27,9 @@ if ( typeof(LinshareServerAPIv2) == "undefined" ) {
 			.classes["@mozilla.org/moz/jssubscript-loader;1"]
 			.createInstance(Components.interfaces.mozIJSSubScriptLoader);
 
+//    nsIMsgCompFields: Components.classes["@mozilla.org/messengercompose/composefields;1"]
+//	                         .getService(Components.interfaces.nsIMsgCompFields);
+
 }
 
 function LinshareServerAPIv3() {
@@ -43,11 +46,12 @@ LinshareServerAPIv3.prototype = {
             fileParams += "&file=" + fileIds[i];
         }
 
-	this.logError("coucou");
-	this.logError(this.nsIMsgCompFields);
-	this.logError(this.nsIMsgCompFields.messageId);
-	this.logError(this.nsIMsgCompFields.replyTo);
-	this.logError(this.nsIMsgCompFields.subject);
+	Components.utils.reportError("LinShare: coucou ");
+
+//	Components.utils.reportError(this.nsIMsgCompFields);
+//	Components.utils.reportError(this.nsIMsgCompFields.messageId);
+//	Components.utils.reportError(this.nsIMsgCompFields.replyTo);
+//	Components.utils.reportError(this.nsIMsgCompFields.subject);
 
         var params = "targetMail=" + recipient + fileParams 
 	params = params + "&inReplyTo=<51E6C9EA.4070506@int1.linshare.dev>&references=<51E6C9EA.4070506@int1.linshare.dev>";
